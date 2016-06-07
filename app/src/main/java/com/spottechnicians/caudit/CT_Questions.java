@@ -121,6 +121,7 @@ public class CT_Questions extends AppCompatActivity {
                         ((Button)findViewById((getNoButtonIdsArray()[currentButtonPressed]))).setTextColor(getResources().getColor(R.color.black));
 
                         ansewers[currentButtonPressed]="yes";
+                        otherText[currentButtonPressed]="";
                         Toast.makeText(getBaseContext(),ansewers[currentButtonPressed]+"", Toast.LENGTH_SHORT).show();
 
                     }
@@ -177,6 +178,7 @@ public class CT_Questions extends AppCompatActivity {
                         ((Button)findViewById((getNoButtonIdsArray()[currentButtonPressed]))).setTextColor(getResources().getColor(R.color.green));
 
                         ansewers[currentButtonPressed]="no";
+                        otherText[currentButtonPressed]="";
                         Toast.makeText(getBaseContext(),ansewers[currentButtonPressed]+"", Toast.LENGTH_SHORT).show();
 
                     }
