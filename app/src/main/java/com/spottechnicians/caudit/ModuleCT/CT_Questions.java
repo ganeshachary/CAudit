@@ -1,0 +1,364 @@
+package com.spottechnicians.caudit.ModuleCT;
+
+import android.app.Dialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import com.spottechnicians.caudit.R;
+import com.spottechnicians.caudit.models.Visit;
+import com.spottechnicians.caudit.utils.UtilCT;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class CT_Questions extends AppCompatActivity {
+
+    Visit visit;
+
+    String ansewers[]={"1","2","3","4","5","6","7","8","9","10","11","12"};
+    String otherText[]={"","","","","","","","","","","",""};
+    int currentButtonPressed;
+    int buttonType;
+    String questionEnglishArray[];
+    String questionHindiArray[];
+    int textViewIds[];
+
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_ct__questions);
+
+        visit=new Visit();
+        Intent intent = getIntent();
+        visit.setAtmId(intent.getStringExtra("atmid"));
+
+
+
+
+        questionEnglishArray=getResources().getStringArray(R.array.ct_question);
+        textViewIds = UtilCT.getResourceQuestion();
+        UtilCT.setEnglishQuestion(questionEnglishArray, textViewIds, this);
+        assignPopupToNOButton();
+        assignPopupToYesButton();
+
+    }
+
+
+    public void onNext(View view) {
+        String result = "";
+        for (int i = 0; i < ansewers.length; i++) {
+            result = result + ansewers[i] + otherText[i] + "/";
+
+        }
+        Toast.makeText(this, result, Toast.LENGTH_LONG).show();
+
+        visit.setCt(ansewers);
+        if (visit.checkCTComplete()) {
+            Toast.makeText(this, "complete", Toast.LENGTH_LONG).show();
+            Intent intent = new Intent(this, Photo_Of_CT.class);
+            intent.putExtra("Visit", visit);
+            startActivity(intent);
+        } else {
+             Toast.makeText(this,"Answer all the question",Toast.LENGTH_LONG).show();
+        }
+    }
+
+
+
+
+
+
+    public int getCurrentButtonPressed() {
+
+        return currentButtonPressed;
+    }
+
+    public void setCurrentButtonPressed(int currentButtonPressed) {
+
+        this.currentButtonPressed = currentButtonPressed;
+    }
+
+    public int getButtonType() {
+
+        return buttonType;
+    }
+
+    public void setButtonType(int buttonType) {
+
+        this.buttonType = buttonType;
+    }
+
+
+    public void assignPopupToYesButton()
+    {
+
+        final int btnYesArray[] = UtilCT.getYesButtonIdsArray();
+        int btnNoArray[] = UtilCT.getNoButtonIdsArray();
+        for(int i=0;i<12;i++)
+        {
+
+            if (btnYesArray[i] == btnYesArray[1] || btnYesArray[i] == btnYesArray[5] || btnYesArray[i] == btnYesArray[11]) {//
+
+
+                findViewById(btnYesArray[i]).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        setButtonType(1);
+                        setCurrentButtonPressed(UtilCT.getPositionOfYesButton(v.getId(), getButtonType()));
+                        //Toast.makeText(getBaseContext(),getCurrentButtonPressed()+"", Toast.LENGTH_SHORT).show();
+                        ((Button) findViewById((UtilCT.getNoButtonIdsArray()[currentButtonPressed]))).setTextColor(getResources().getColor(R.color.black));
+                        ((Button) findViewById((UtilCT.getYesButtonIdsArray()[currentButtonPressed]))).setTextColor(getResources().getColor(R.color.red));
+
+                        showPopup(getCurrentButtonPressed());
+                    }
+                });
+            }
+            else
+            {
+
+                findViewById(btnYesArray[i]).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        setButtonType(1);
+                        setCurrentButtonPressed(UtilCT.getPositionOfYesButton(v.getId(), getButtonType()));
+                       // Toast.makeText(getBaseContext(), "This is normal button", Toast.LENGTH_SHORT).show();
+                        ((Button) findViewById((UtilCT.getYesButtonIdsArray()[currentButtonPressed]))).setTextColor(getResources().getColor(R.color.green));
+                        ((Button) findViewById((UtilCT.getNoButtonIdsArray()[currentButtonPressed]))).setTextColor(getResources().getColor(R.color.black));
+
+                        ansewers[currentButtonPressed]="yes";
+                        otherText[currentButtonPressed]="";
+                        // Toast.makeText(getBaseContext(),ansewers[currentButtonPressed]+"", Toast.LENGTH_SHORT).show();
+
+                    }
+                });
+            }
+
+
+        }
+
+    }
+
+   /* public int getPositionOfYesButton(long id)
+    {;
+        int array[];
+        if(getButtonType()==1)
+        {
+            array=UtilCT.getYesButtonIdsArray();
+        }
+        else {
+             array=UtilCT.getNoButtonIdsArray();
+        }
+
+        int position=0;
+        for(int i=0;i<array.length;i++)
+        {
+            if(array[i]==id)
+            {
+                position=i;
+                return position;
+            }
+        }
+        return position;
+    }
+*/
+
+
+    public void assignPopupToNOButton()
+    {
+       // int btnYesArray[]=getYesButtonIdsArray();
+        int btnNoArray[] = UtilCT.getNoButtonIdsArray();
+        for(int i=0;i<12;i++)
+        {
+            setCurrentButtonPressed(i);
+            if (btnNoArray[i] == btnNoArray[5] || btnNoArray[i] == btnNoArray[11])
+            {
+
+                findViewById(btnNoArray[i]).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // Toast.makeText(getBaseContext(), "This is normal button", Toast.LENGTH_SHORT).show();
+                        setButtonType(0);
+                        setCurrentButtonPressed(UtilCT.getPositionOfYesButton(v.getId(), getButtonType()));
+                        ((Button) findViewById((UtilCT.getYesButtonIdsArray()[currentButtonPressed]))).setTextColor(getResources().getColor(R.color.black));
+                        ((Button) findViewById((UtilCT.getNoButtonIdsArray()[currentButtonPressed]))).setTextColor(getResources().getColor(R.color.green));
+
+                        ansewers[currentButtonPressed]="no";
+                        otherText[currentButtonPressed]="";
+                        //Toast.makeText(getBaseContext(),ansewers[currentButtonPressed]+"", Toast.LENGTH_SHORT).show();
+
+                    }
+                });
+            }
+            else
+            {
+                findViewById(btnNoArray[i]).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        setButtonType(0);
+                        setCurrentButtonPressed(UtilCT.getPositionOfYesButton(v.getId(), getButtonType()));
+                            //showTextPopUp();
+                        ((Button) findViewById((UtilCT.getYesButtonIdsArray()[currentButtonPressed]))).setTextColor(getResources().getColor(R.color.black));
+                        ((Button) findViewById((UtilCT.getNoButtonIdsArray()[currentButtonPressed]))).setTextColor(getResources().getColor(R.color.red));
+
+                        showPopup(getCurrentButtonPressed());
+                        //((Button)v).setTextColor(getResources().getColor(R.color.red));
+
+
+
+                    }
+                });
+
+            }
+
+
+        }
+
+
+    }
+
+    public void showPopup(final int buttonPressed)
+    {
+
+        Dialog dialog;
+
+         String array[];
+        if(getButtonType()==1)
+        {
+            array = UtilCT.getYesSubQuestion();
+        }
+        else
+        {
+            array = UtilCT.getNoSubQuestion();
+        }
+
+
+        final String[] items=array[buttonPressed].split("-");
+        final List<String> itemsSelected = new ArrayList();
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Select Reasons");
+        builder.setMultiChoiceItems(items, null,
+                new DialogInterface.OnMultiChoiceClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int selectedItemId,
+                                        boolean isSelected) {
+                        if (isSelected) {
+                            // Toast.makeText(getBaseContext(),items[selectedItemId].toString()+"",Toast.LENGTH_SHORT).show();
+                            itemsSelected.add(items[selectedItemId]);
+
+                        } else if (itemsSelected.contains(items[selectedItemId])) {
+                            itemsSelected.remove(items[selectedItemId]);
+                        }
+
+
+                    }
+                })
+                .setPositiveButton("Done!", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        String oneAnswer;
+
+                        if (!(itemsSelected.size() == 0)) {
+                            if (getButtonType() == 1) {
+                                oneAnswer = "yes";
+                            } else {
+                                oneAnswer = "no";
+                            }
+
+
+                            if (itemsSelected.contains("Other")) {
+                                //Toast.makeText(getBaseContext(),"other is selected", Toast.LENGTH_SHORT).show();
+                                showTextPopUp();
+                                for (int i = 0; i < itemsSelected.size(); i++) {
+                                    oneAnswer = oneAnswer + "," + itemsSelected.get(i);
+                                }
+                                ansewers[buttonPressed] = oneAnswer;
+                                Toast.makeText(getBaseContext(), ansewers[buttonPressed] + "", Toast.LENGTH_SHORT).show();
+
+
+                            } else {
+
+                                for (int i = 0; i < itemsSelected.size(); i++) {
+                                    oneAnswer = oneAnswer + "," + itemsSelected.get(i);
+                                }
+                                ansewers[buttonPressed] = oneAnswer;
+                                Toast.makeText(getBaseContext(), ansewers[buttonPressed] + "", Toast.LENGTH_SHORT).show();
+                            }
+
+                        }
+                        else
+                        {
+                            if (getButtonType() == 1) {
+                                ((Button) findViewById((UtilCT.getYesButtonIdsArray()[currentButtonPressed]))).setTextColor(getResources().getColor(R.color.black));
+                            } else {
+                                ((Button) findViewById((UtilCT.getNoButtonIdsArray()[currentButtonPressed]))).setTextColor(getResources().getColor(R.color.black));
+                            }
+                            ansewers[buttonPressed] = buttonPressed + 1 + "";
+
+                        }
+                    }
+
+                })
+                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int id) {
+                        if (getButtonType() == 1) {
+                            ((Button) findViewById((UtilCT.getYesButtonIdsArray()[currentButtonPressed]))).setTextColor(getResources().getColor(R.color.black));
+                        } else {
+                            ((Button) findViewById((UtilCT.getNoButtonIdsArray()[currentButtonPressed]))).setTextColor(getResources().getColor(R.color.black));
+                        }
+                        ansewers[buttonPressed] = buttonPressed + 1 + "";
+
+
+                    }
+                });
+        dialog = builder.create();
+        dialog.setCancelable(false);
+        dialog.show();
+
+
+    }
+
+
+
+        public void showTextPopUp()
+        {
+            AlertDialog dialog2;
+            final EditText editView=new EditText(this);
+            AlertDialog.Builder builder2=new AlertDialog.Builder(this);
+            builder2.setTitle("Enter the reason");
+            builder2.setView(editView);
+            builder2.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    otherText[currentButtonPressed]=(editView.getText().toString());
+                   // Toast.makeText(getBaseContext(),getOtherText(),Toast.LENGTH_SHORT).show();
+
+                }
+            });
+
+
+            dialog2=builder2.create();
+            dialog2.setCancelable(false);
+            dialog2.show();
+        }
+
+
+
+   /* public void setEnglishQuestion(String questionArray[],int textViewIds[])
+    {
+
+        for(int i=0;i<textViewIds.length;i++)
+        {
+            ((TextView)findViewById(textViewIds[i])).setText(questionArray[i]);
+        }
+
+    }*/
+}

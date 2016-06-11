@@ -13,8 +13,10 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 
 import com.spottechnicians.caudit.DatabaseHandler.DbHelper;
+import com.spottechnicians.caudit.ModuleCT.CT_Questions;
 import com.spottechnicians.caudit.adapters.AtmList;
 import com.spottechnicians.caudit.models.Atm;
 
@@ -53,7 +55,10 @@ public class CT_Fragment extends Fragment {
         listViewCT.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                String stringAtmId = ((TextView) view.findViewById(R.id.tvAtmId)).getText().toString();
+                // Toast.makeText(getContext(),stringAtmId,Toast.LENGTH_SHORT).show();
                 Intent intent=new Intent(getContext(),CT_Questions.class);
+                intent.putExtra("atmid", stringAtmId);
                 startActivity(intent);
             }
         });
