@@ -4,10 +4,13 @@ import android.graphics.Bitmap;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.HashMap;
+
 /**
  * Created by onestech on 04/06/16.
  */
 public class Visit implements Parcelable {
+
     public static final Creator<Visit> CREATOR = new Creator<Visit>() {
         @Override
         public Visit createFromParcel(Parcel in) {
@@ -19,8 +22,11 @@ public class Visit implements Parcelable {
             return new Visit[size];
         }
     };
-    Bitmap bitmap[] = new Bitmap[3];
+    Bitmap ctphoto1;
+    Bitmap ctphoto2;
+    Bitmap ctphoto3;
     Bitmap signature;
+    HashMap<String, Bitmap> ctPicList;
     String[] hk, ct, srm;
     private String viewPhotos,visitId,atmId,userId,location,bankName,customerName,
                     date,time,caretakeName,caretakerNumber,housekeeperName,
@@ -44,14 +50,40 @@ public class Visit implements Parcelable {
         SrmNumber = in.readString();
         latitude = in.readString();
         longitude = in.readString();
-        bitmap = in.createTypedArray(Bitmap.CREATOR);
         signature = in.readParcelable(Bitmap.class.getClassLoader());
+        ctphoto1 = in.readParcelable(Bitmap.class.getClassLoader());
+        ctphoto2 = in.readParcelable(Bitmap.class.getClassLoader());
+        ctphoto3 = in.readParcelable(Bitmap.class.getClassLoader());
         hk = in.createStringArray();
         ct = in.createStringArray();
         srm = in.createStringArray();
     }
 
     public Visit() {
+    }
+
+    public Bitmap getCtphoto1() {
+        return ctphoto1;
+    }
+
+    public void setCtphoto1(Bitmap ctphoto1) {
+        this.ctphoto1 = ctphoto1;
+    }
+
+    public Bitmap getCtphoto2() {
+        return ctphoto2;
+    }
+
+    public void setCtphoto2(Bitmap ctphoto2) {
+        this.ctphoto2 = ctphoto2;
+    }
+
+    public Bitmap getCtphoto3() {
+        return ctphoto3;
+    }
+
+    public void setCtphoto3(Bitmap ctphoto3) {
+        this.ctphoto3 = ctphoto3;
     }
 
     public Bitmap getSignature() {
@@ -61,16 +93,6 @@ public class Visit implements Parcelable {
     public void setSignature(Bitmap signature) {
         this.signature = signature;
     }
-
-    public Bitmap[] getBitmap() {
-        return bitmap;
-    }
-
-    public void setBitmap(Bitmap[] bitmap) {
-        this.bitmap = bitmap;
-    }
-
-
 
     public boolean checkCTComplete()
     {
@@ -244,7 +266,6 @@ public class Visit implements Parcelable {
         this.srm = srm;
     }
 
-
     @Override
     public int describeContents() {
         return 0;
@@ -269,8 +290,10 @@ public class Visit implements Parcelable {
         dest.writeString(SrmNumber);
         dest.writeString(latitude);
         dest.writeString(longitude);
-        dest.writeTypedArray(bitmap, flags);
         dest.writeParcelable(signature, flags);
+        dest.writeParcelable(ctphoto1, flags);
+        dest.writeParcelable(ctphoto2, flags);
+        dest.writeParcelable(ctphoto3, flags);
         dest.writeStringArray(hk);
         dest.writeStringArray(ct);
         dest.writeStringArray(srm);

@@ -1,9 +1,11 @@
 package com.spottechnicians.caudit.ModuleCT;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -15,7 +17,9 @@ import com.spottechnicians.caudit.R;
 import com.spottechnicians.caudit.models.Visit;
 import com.spottechnicians.caudit.utils.UtilCT;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class CT_Questions extends AppCompatActivity {
@@ -30,6 +34,30 @@ public class CT_Questions extends AppCompatActivity {
     String questionHindiArray[];
     int textViewIds[];
 
+    public static void displayPromptForEnablingDateTime(final Activity activity) {
+
+        final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        final String action = Settings.ACTION_DATE_SETTINGS;
+        final String message = "turn on date and time to AUTO ";
+
+        builder.setMessage(message)
+                .setPositiveButton("OK",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface d, int id) {
+                                activity.startActivity(new Intent(action));
+                                activity.finish();
+                                d.dismiss();
+                            }
+                        })
+                .setNegativeButton("Cancel",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface d, int id) {
+                                activity.finish();
+                                d.cancel();
+                            }
+                        });
+        builder.create().show();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,10 +67,7 @@ public class CT_Questions extends AppCompatActivity {
         visit=new Visit();
         Intent intent = getIntent();
         visit.setAtmId(intent.getStringExtra("atmid"));
-
-
-
-
+        setTimeDate();//sets time and date setting and update the atm date and time on list item click
         questionEnglishArray=getResources().getStringArray(R.array.ct_question);
         textViewIds = UtilCT.getResourceQuestion();
         UtilCT.setEnglishQuestion(questionEnglishArray, textViewIds, this);
@@ -51,6 +76,34 @@ public class CT_Questions extends AppCompatActivity {
 
     }
 
+    public void setTimeDate() {
+        try {
+            int answer = android.provider.Settings.System.getInt(getContentResolver(),
+                    android.provider.Settings.Global.AUTO_TIME);
+            int answer2 = android.provider.Settings.System.getInt(getContentResolver(),
+                    Settings.Global.AUTO_TIME_ZONE);
+            //Toast.makeText(this,answer+"and"+answer2,Toast.LENGTH_LONG).show();
+            if (answer == 0 || answer2 == 0) {
+                displayPromptForEnablingDateTime(this);
+
+            }
+            if (answer == 1 || answer2 == 1) {
+                Calendar c = Calendar.getInstance();
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+                String Time = sdf.format(c.getTime());
+                SimpleDateFormat sdf2 = new SimpleDateFormat("hh:mm:ss a");
+                String strDate = sdf2.format(c.getTime());
+                visit.setTime(Time);
+                visit.setDate(strDate);
+                //Toast.makeText(this,Time+","+strDate,Toast.LENGTH_LONG).show();
+
+            }
+        } catch (Settings.SettingNotFoundException e) {
+            e.printStackTrace();
+        }
+
+    }
 
     public void onNext(View view) {
         String result = "";

@@ -6,31 +6,31 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.spottechnicians.caudit.R;
 import com.spottechnicians.caudit.models.Visit;
 
 public class Signatuere_Of_CT extends AppCompatActivity {
 
-    EditText etName, EtSignature;
-    Button btnSignature, btnSave, btnUpload;
+    EditText etName, etNumber;
     ImageView ivSignature;
-    Visit visit;
-    Bitmap bitmap[] = new Bitmap[3];
+    Visit visit = new Visit();
+    Bitmap bitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signatuere__of__ct);
         ivSignature = (ImageView) findViewById(R.id.ivSignature);
-        //visit=getIntent().getExtras().getParcelable("Visit2");
-        //bitmap=(Bitmap[]) getIntent().getParcelableArrayExtra("Bitmap");
-        //bitmap=visit.getBitmap();
-        //ivSignature.setVisibility(View.VISIBLE);
-        //ivSignature.setImageBitmap(bitmap[0]);
+        etName = (EditText) findViewById(R.id.etCtName);
+        etNumber = (EditText) findViewById(R.id.etCtNumber);
+        visit = getIntent().getExtras().getParcelable("Visit2");
+        bitmap = visit.getCtphoto1();
+        ivSignature.setVisibility(View.VISIBLE);
+        ivSignature.setImageBitmap(bitmap);
 
     }
 
@@ -46,15 +46,52 @@ public class Signatuere_Of_CT extends AppCompatActivity {
         if (requestCode == 1) {
             if (resultCode == RESULT_OK) {
                 byte[] byteArray = data.getByteArrayExtra("signature");
-                Bitmap bmp = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
+                Bitmap bitmapSignature = BitmapFactory.decodeByteArray(byteArray, 0, byteArray.length);
                 ivSignature.setVisibility(View.VISIBLE);
-                ivSignature.setImageBitmap(bmp);
+                visit.setSignature(bitmapSignature);
+                ivSignature.setImageBitmap(bitmapSignature);
             }
             if (resultCode == RESULT_CANCELED) {
                 //Toast.makeText(this,"result was not ok",Toast.LENGTH_SHORT).show();
             }
 
         }
+    }
+
+    public void onSave(View view) {
+
+        boolean status = true;
+
+        if (visit.getSignature() != null) {
+            String ctName = etName.getText().toString();
+            String ctNumber = etNumber.getText().toString();
+            if (ctName != null && ctNumber != null) {
+                visit.setCaretakeName(ctName);
+                visit.setCaretakerNumber(ctNumber);
+            } else if (ctName == null) {
+                Toast.makeText(this, "Enter the Name", Toast.LENGTH_LONG).show();
+            } else if (ctNumber == null) {
+                Toast.makeText(this, "Enter the Phone Number", Toast.LENGTH_LONG).show();
+            } else {
+                status = false;
+                Toast.makeText(this, "Enter Name and Number", Toast.LENGTH_LONG).show();
+            }
+        } else {
+            status = false;
+            Toast.makeText(this, "Put your Signature", Toast.LENGTH_LONG).show();
+        }
+
+        if (status) {
+            //insert into the database and close the activity
+
+        }
+
+
+    }
+
+    public void onUpload(View view) {
+        onSave(view);
+
     }
 
 }

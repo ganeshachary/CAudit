@@ -44,12 +44,14 @@
         android:id="@+id/btnSave"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:onClick="onSave"
         android:text="Save" />
 
     <Button
         android:id="@+id/btnUpload"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:onClick="onUpload"
         android:text="Upload" />
 
 </LinearLayout>

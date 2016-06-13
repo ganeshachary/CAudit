@@ -50,15 +50,19 @@ public class Photo_Of_CT extends AppCompatActivity {
         boolean status = true;
         for (int i = 0; i < bitmap.length; i++) {
             if (bitmap[i] == null) {
+
                 status = false;
             }
         }
-        // visit.setBitmap(bitmap);
+
+
         if (status) {
+            visit.setCtphoto1(bitmap[0]);
+            visit.setCtphoto1(bitmap[1]);
+            visit.setCtphoto1(bitmap[2]);
             Intent intent = new Intent(Photo_Of_CT.this, Signatuere_Of_CT.class);
             Log.v("atmid", visit.getAtmId());
-            //intent.putExtra("Visit2",visit);
-            intent.putExtra("Bitm", "null");
+            intent.putExtra("Visit2", visit);
 
 
             startActivity(intent);
